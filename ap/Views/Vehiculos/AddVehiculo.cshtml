@@ -1,0 +1,48 @@
+﻿@model ap.Models.Vehiculo
+
+@{
+    ViewBag.Title = "Agregar Vehículo";
+}
+
+<h2>Agregar Vehículo</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(m => m.IdCliente) <!-- Campo oculto para asociar el vehículo al cliente -->
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Marca)
+        @Html.TextBoxFor(m => m.Marca, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Marca)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Modelo)
+        @Html.TextBoxFor(m => m.Modelo, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Modelo)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Anio)
+        @Html.TextBoxFor(m => m.Anio, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Anio)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Placa)
+        @Html.TextBoxFor(m => m.Placa, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Placa)
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar Vehículo</button>
+    <a href="@Url.Action("Index", "Clientes")" class="btn btn-secondary">Cancelar</a>
+}

@@ -1,0 +1,46 @@
+﻿@model ap.Models.Cita
+
+@{
+    ViewBag.Title = "Crear Cita";
+    var cliente = ViewBag.Cliente as ap.Models.Cliente;
+}
+
+<h2>Crear Cita</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="form-group">
+    <label>Cliente:</label>
+    <p>@cliente.Nombre @cliente.Apellido</p>
+    <p>Correo: @cliente.CorreoElectronico</p>
+</div>
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+    @Html.HiddenFor(m => m.IdCliente)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.IdVehiculo, "Vehículo")
+        @Html.DropDownListFor(m => m.IdVehiculo, new SelectList(ViewBag.Vehiculos, "Value", "Text"), "Seleccione un vehículo", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.IdVehiculo)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.FechaInicio)
+        @Html.TextBoxFor(m => m.FechaInicio, new { @class = "form-control", type = "datetime-local" })
+        @Html.ValidationMessageFor(m => m.FechaInicio)
+    </div>
+
+    <button type="submit" class="btn btn-success">Guardar Cita</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Cancelar</a>
+}

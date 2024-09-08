@@ -1,0 +1,41 @@
+﻿@model IEnumerable<ap.Models.Administrador>
+
+<h2>Listado de Administradores</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var admin in Model)
+        {
+            <tr>
+                <td>@admin.Nombre</td>
+                <td>@admin.Correo</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = admin.IdAdmin })" class="btn btn-warning">Editar</a>
+                    <a href="@Url.Action("Delete", new { id = admin.IdAdmin })" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create")" class="btn btn-primary">Agregar Administrador</a>

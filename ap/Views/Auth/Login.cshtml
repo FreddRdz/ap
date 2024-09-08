@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+@using (Html.BeginForm("SignIn", "Auth", FormMethod.Post))
+{
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="text-center mb-4">Iniciar Sesión</h3>
+
+                        <!-- Correo Electrónico -->
+                        <div class="form-group mb-3">
+                            <label for="correo" class="form-label">Correo Electrónico</label>
+                            @Html.TextBox("correo", null, new { @class = "form-control", placeholder = "Ingrese su correo", type = "email", required = "required" })
+                        </div>
+
+                        <!-- Contraseña con botón para mostrar/ocultar -->
+                        <div class="form-group mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <div class="input-group">
+                                @Html.Password("password", null, new { @class = "form-control", placeholder = "Ingrese su contraseña", required = "required", id = "password" })
+                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">Mostrar</button>
+                            </div>
+                        </div>
+
+                        <!-- Botón para Iniciar Sesión -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<script>
+    function togglePassword() {
+        var passwordField = document.getElementById("password");
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+        } else {
+            passwordField.type = "password";
+        }
+    }
+</script>

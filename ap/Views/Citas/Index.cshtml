@@ -1,0 +1,173 @@
+﻿@model IEnumerable<ap.Models.Cita>
+
+@{
+    ViewBag.Title = "Listado de Citas";
+}
+
+<h2>Listado de Citas</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID Cita</th>
+            <th>Vehículo</th>
+            <th>Fecha Cita</th>
+            <th>Fecha </th>
+            <th>Acciones</th>
+            <th>Estado</th>
+            <th>Comentarios</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cita in Model)
+        {
+            <tr>
+                <td>@cita.IdCita</td>
+                <td>@cita.Vehiculo</td>
+                <td>@cita.FechaInicio.ToString("g")</td>
+                <td>
+                    @if (cita.FechaTerminacion.HasValue)
+                    {
+                        @cita.FechaTerminacion.Value.ToString("g")
+                    }
+                    else
+                    {
+                        @:No especificada
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = cita.IdCita })" class="btn btn-warning">Editar</a>
+                    <a href="@Url.Action("Delete", new { id = cita.IdCita })" class="btn btn-danger">Eliminar</a>
+                </td>
+                <td>
+                    @{
+                        if (cita.Estado == null)
+                        {
+                            @:Pendiente
+                        }
+                        else if (cita.Estado == true)
+                        {
+                            @:Aprobado
+                        }
+                        else
+                        {
+                            @:Rechazado
+                        }
+                    }
+                </td>
+                <td>@(cita.Comentarios ?? "")</td>
+                @if (cita.Estado == null)
+                {
+                    <td>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAprobarReprobar"
+                                data-idcita="@cita.IdCita" data-comentarios="@cita.Comentarios">
+                            Aprobar/Reprobar
+                        </button>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="modalAprobarReprobar" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Aprobar/Reprobar Cita</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="modalComentarios">Comentarios</label>
+                    <textarea id="modalComentarios" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="modalFechaTerminacion">Fecha de Terminación</label>
+                    <input type="datetime-local" id="modalFechaTerminacion" class="form-control" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="aprobarBtn">Aprobar</button>
+                <button type="button" class="btn btn-danger" id="desaprobarBtn">Reprobar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+
+                <input type="hidden" id="modalIdCita" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Abrir el modal y cargar los datos
+        $('#modalAprobarReprobar').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var idCita = button.data('idcita');
+            var comentarios = button.data('comentarios') || '';
+
+            var modal = $(this);
+            modal.find('#modalIdCita').val(idCita);
+            modal.find('#modalComentarios').val(comentarios);
+        });
+
+        // Botón de Aprobar
+        $('#aprobarBtn').click(function () {
+            var idCita = $('#modalIdCita').val();
+            var comentarios = $('#modalComentarios').val();
+            var fechaTerminacion = $('#modalFechaTerminacion').val();
+
+            if (!fechaTerminacion) {
+                alert('Por favor, selecciona una fecha de terminación.');
+                return;
+            }
+
+            $.post('@Url.Action("AprobarCita", "Citas")', {
+                idCita: idCita,
+                comentarios: comentarios,
+                fechaTerminacion: fechaTerminacion
+            }, function (data) {
+                if (data.success) {
+                    location.reload();  // Recargar la página después de aprobar
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+
+        // Botón de Reprobar
+        $('#desaprobarBtn').click(function () {
+            var idCita = $('#modalIdCita').val();
+            var comentarios = $('#modalComentarios').val();
+
+            $.post('@Url.Action("DesaprobarCita", "Citas")', {
+                idCita: idCita,
+                comentarios: comentarios
+            }, function (data) {
+                location.reload();  // Recargar la página después de desaprobar
+            });
+        });
+    });
+</script>
+

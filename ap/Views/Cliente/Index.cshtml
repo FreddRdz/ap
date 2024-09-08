@@ -1,0 +1,47 @@
+﻿@model List<ap.Models.Cliente>
+<!-- Mostrar mensaje de error si existe -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Correo Electrónico</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cliente in Model)
+        {
+            <tr>
+                <td>@cliente.Nombre</td>
+                <td>@cliente.Apellido</td>
+                <td>@cliente.CorreoElectronico</td>
+                <td>@cliente.Telefono</td>
+                <td>@cliente.Direccion</td>
+                <td>
+                    <a href="@Url.Action("Edit", new { id = cliente.IdCliente })" class="btn btn-warning">Editar</a>
+                    <a href="@Url.Action("Delete", new { id = cliente.IdCliente })" class="btn btn-danger">Eliminar</a>
+                    <a href="@Url.Action("AddVehiculo", "Vehiculos", new { idCliente = cliente.IdCliente })" class="btn btn-primary">Agregar Vehículo</a>
+                    <a href="@Url.Action("Create", "Citas", new { idCliente = cliente.IdCliente })" class="btn btn-primary">Agregar Cita</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create")" class="btn btn-primary">Agregar Cliente</a>
